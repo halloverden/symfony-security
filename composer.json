@@ -1,0 +1,26 @@
+{
+    "name": "halloverden/symfony-security",
+    "description": "Compliments Symfony Security with Access Definitions and utils",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tom Roar Furunes",
+            "email": "tom.roar@halloverden.no"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^7.2",
+        "symfony/security-core": "^4.4|^5.0",
+        "jms/metadata": "^2.1",
+        "doctrine/annotations": "^1.8",
+        "doctrine/collections": "^1.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "HalloVerden\\Security\\": "src"
+        }
+    }
+}
