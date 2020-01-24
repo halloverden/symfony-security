@@ -6,11 +6,12 @@ use HalloVerden\Security\Interfaces\SecurityInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Security as BaseSecurity;
 
 class Security implements SecurityInterface {
 
   /**
-   * @var Security
+   * @var BaseSecurity
    */
   private $security;
 
@@ -27,11 +28,11 @@ class Security implements SecurityInterface {
   /**
    * Security constructor.
    *
-   * @param Security                       $security
+   * @param BaseSecurity                   $security
    * @param AccessDecisionManagerInterface $accessDecisionManager
    * @param array                          $adminRoles
    */
-  public function __construct(Security $security, AccessDecisionManagerInterface $accessDecisionManager, array $adminRoles = []) {
+  public function __construct(BaseSecurity $security, AccessDecisionManagerInterface $accessDecisionManager, array $adminRoles = []) {
     $this->security = $security;
     $this->accessDecisionManager = $accessDecisionManager;
     $this->adminRoles = $adminRoles;
