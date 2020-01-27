@@ -24,5 +24,8 @@
         "psr-4": {
             "HalloVerden\\Security\\": "src"
         }
+    },
+    "require-dev": {
+        "symfony/validator": "^4.4|^5.0"
     }
 }
