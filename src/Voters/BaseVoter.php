@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Security\Voters;
+namespace HalloVerden\Security\Voters;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
