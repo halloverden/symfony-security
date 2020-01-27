@@ -80,21 +80,21 @@ class Security implements SecurityInterface {
    * @inheritDoc
    */
   public function getUser() {
-    $this->security->getUser();
+    return $this->security->getUser();
   }
 
   /**
    * @inheritDoc
    */
   public function isGranted($attributes, $subject = null) {
-    $this->security->isGranted($attributes, $subject);
+    return $this->security->isGranted($attributes, $subject);
   }
 
   /**
    * @inheritDoc
    */
   public function getToken() {
-    $this->security->getToken();
+    return $this->security->getToken();
   }
 
   /**
