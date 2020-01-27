@@ -54,11 +54,11 @@ class HasAccessValidator extends ConstraintValidator {
         $property = $constraint->property;
 
         if ($constraint->read && !$accessDefinition->canReadProperty($property)) {
-          $context->buildViolation('NO_READ_ACCESS_TO_PROPERTY__' . strtoupper($property))->addViolation();
+          $context->buildViolation($constraint->noReadAccessMessage)->setParameter('{{ property }}', $property)->setCode(HasAccess::ERROR_NO_READ_ACCESS)->addViolation();
         }
 
         if ($constraint->write && !$accessDefinition->canWriteProperty($property)) {
-          $context->buildViolation('NO_WRITE_ACCESS_TO_PROPERTY__' . strtoupper($property))->addViolation();
+          $context->buildViolation($constraint->noWriteAccessMessage)->setParameter('{{ property }}', $property)->setCode(HasAccess::ERROR_NO_WRITE_ACCESS)->addViolation();
         }
       }
     }
