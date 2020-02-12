@@ -52,19 +52,24 @@ class AuthenticatorDeciderService implements AuthenticatorDeciderServiceInterfac
   }
 
   /**
-   * @param string $controllerMethod
+   * @param string $controller
    *
    * @return Authenticator
    * @throws \ReflectionException
    */
-  private function getAuthenticatorAnnotation(string $controllerMethod): ?Authenticator {
-    if (array_key_exists($controllerMethod,  $this->authenticatorAnnotations)) {
-      return $this->authenticatorAnnotations[$controllerMethod];
+  private function getAuthenticatorAnnotation(string $controller): ?Authenticator {
+    if (array_key_exists($controller,  $this->authenticatorAnnotations)) {
+      return $this->authenticatorAnnotations[$controller];
+    }
+
+    if (class_exists($controller)) {
+      $authenticator = $this->reader->getClassAnnotation(new \ReflectionClass($controller), Authenticator::class);
+    } else {
+      $authenticator = $this->reader->getMethodAnnotation(new \ReflectionMethod($controller), Authenticator::class);
     }
 
     /** @var Authenticator $authenticator */
-    $authenticator = $this->reader->getMethodAnnotation(new \ReflectionMethod($controllerMethod), Authenticator::class);
-    return $this->authenticatorAnnotations[$controllerMethod] = $authenticator;
+    return $this->authenticatorAnnotations[$controller] = $authenticator;
   }
 
 }
