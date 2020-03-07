@@ -9,6 +9,11 @@ use HalloVerden\Security\Exceptions\InvalidSubjectException;
 use HalloVerden\Security\Interfaces\SecurityInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * Class BaseVoter
+ *
+ * @package HalloVerden\Security\Voters
+ */
 abstract class BaseVoter extends Voter {
 
   /**
@@ -50,7 +55,7 @@ abstract class BaseVoter extends Voter {
       $isSupported = false;
 
       foreach ($supportedClasses as $supportedClass) {
-        if ($subject instanceof $supportedClass) {
+        if ($this->isSupported($subject, $supportedClass)) {
           $isSupported = true;
           break;
         }
@@ -65,14 +70,35 @@ abstract class BaseVoter extends Voter {
   }
 
   /**
+   * @param $subject
+   * @param $supportedClass
+   *
+   * @return bool
+   */
+  private function isSupported($subject, $supportedClass): bool {
+    $type = strtolower($supportedClass);
+    $type = 'boolean' == $type ? 'bool' : $supportedClass;
+    $isFunction = 'is_'.$type;
+    $ctypeFunction = 'ctype_'.$type;
+
+    if (\function_exists($isFunction) && $isFunction($subject)) {
+      return true;
+    } elseif (\function_exists($ctypeFunction) && $ctypeFunction($subject)) {
+      return true;
+    } elseif ($subject instanceof $supportedClass) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Sorts subjects according to supportedClasses.
    *
    * @param array|Collection $subjects
    * @param array            $supportedClasses
    * @param bool             $strictLength
-   *
    * @return array|Collection
-   * @throws InvalidSubjectException
    */
   protected function sortSubjects($subjects, array $supportedClasses, bool $strictLength = true) {
     $isCollection = false;
@@ -82,10 +108,14 @@ abstract class BaseVoter extends Voter {
     }
 
     uasort($subjects, function ($a, $b) use ($supportedClasses) {
-      if ($this->getSupportedClassIndex($a, $supportedClasses) === $this->getSupportedClassIndex($b, $supportedClasses)) {
+      $supportedClassIndexA = $this->getSupportedClassIndex($a, $supportedClasses);
+      $supportedClassIndexB = $this->getSupportedClassIndex($b, $supportedClasses);
+
+      if ($supportedClassIndexA === $supportedClassIndexB) {
         return 0;
       }
-      return $this->getSupportedClassIndex($a, $supportedClasses) < $this->getSupportedClassIndex($b, $supportedClasses) ? -1 : 1;
+
+      return $supportedClassIndexA < $supportedClassIndexB ? -1 : 1;
     });
 
     if ($strictLength && count($subjects) !== count($supportedClasses)) {
@@ -102,12 +132,36 @@ abstract class BaseVoter extends Voter {
    */
   private function getSupportedClassIndex($subject, array $supportedClasses): int {
     foreach ($supportedClasses as $i => $supportedClass) {
-      if ($subject instanceof $supportedClass) {
+      if (is_array($supportedClass)) {
+        if ($this->isSupportedMulti($subject, $supportedClass)) {
+          return $i;
+        }
+
+        continue;
+      }
+
+      if ($this->isSupported($subject, $supportedClass)) {
         return $i;
       }
     }
 
     throw new InvalidSubjectException($subject);
+  }
+
+  /**
+   * @param       $subject
+   * @param array $supportedClasses
+   *
+   * @return bool
+   */
+  private function isSupportedMulti($subject, array $supportedClasses): bool {
+    foreach ($supportedClasses as $supportedClass) {
+      if ($this->isSupported($subject, $supportedClass)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
 }
