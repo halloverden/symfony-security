@@ -18,7 +18,7 @@
         "doctrine/annotations": "^1.8",
         "doctrine/collections": "^1.6",
         "symfony/security-guard": "^4.4.7|^5.0.7",
-        "halloverden/symfony-http-exceptions": "^0.3.0"
+        "halloverden/symfony-http-exceptions": "^0.3.1"
     },
     "autoload": {
         "psr-4": {
