@@ -80,7 +80,7 @@ abstract class AbstractAccessTokenAuthenticator extends AbstractAuthenticator {
       return false;
     }
 
-    $this->accessToken = $this->oauthTokenProvider->getOauthTokenFromJWT($jwt);
+    $this->accessToken = $this->oauthTokenProvider->getOauthTokenFromJWT($jwt, $bearerToken);
 
     return $this->accessToken !== null;
   }

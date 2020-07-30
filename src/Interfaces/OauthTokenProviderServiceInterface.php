@@ -10,10 +10,11 @@ use Jose\Easy\JWT;
 interface OauthTokenProviderServiceInterface {
 
   /**
-   * @param JWT $jwt
+   * @param JWT    $jwt
+   * @param string $rawToken
    *
    * @return OidcAccessTokenInterface|null
    */
-  public function getOauthTokenFromJWT(JWT $jwt): ?OidcAccessTokenInterface;
+  public function getOauthTokenFromJWT(JWT $jwt, string $rawToken): ?OidcAccessTokenInterface;
 
 }
