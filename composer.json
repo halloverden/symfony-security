@@ -1,6 +1,6 @@
 {
     "name": "halloverden/symfony-security",
-    "description": "Compliments Symfony Security with Access Definitions and utils",
+    "description": "Compliments Symfony Security",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -9,6 +9,16 @@
             "email": "tom.roar@halloverden.no"
         }
     ],
+    "keywords": [
+        "access definition",
+        "authenticator",
+        "security",
+        "symfony",
+        "voter"
+    ],
+    "support": {
+        "issues": "https://github.com/halloverden/symfony-security/issues"
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
