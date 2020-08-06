@@ -5,7 +5,7 @@ namespace HalloVerden\Security\Voters;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use HalloVerden\Security\Exceptions\InvalidSubjectException;
+use HalloVerden\Security\Exception\InvalidSubjectException;
 use HalloVerden\Security\Interfaces\SecurityInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 

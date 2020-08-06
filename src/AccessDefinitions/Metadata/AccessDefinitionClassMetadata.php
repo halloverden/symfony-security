@@ -6,9 +6,76 @@ namespace HalloVerden\Security\AccessDefinitions\Metadata;
 
 use Metadata\MergeableClassMetadata;
 
+/**
+ * Class AccessDefinitionClassMetadata
+ *
+ * @package HalloVerden\Security\AccessDefinitions\Metadata
+ */
 class AccessDefinitionClassMetadata extends MergeableClassMetadata {
 
   /**
+   * @var string[]|null
+   */
+  public $canCreateRoles;
+
+  /**
+   * @var string[]|null
+   */
+  public $canCreateScopes;
+
+  /**
+   * @var string|null
+   */
+  public $canCreateMethod;
+
+  /**
+   * @var string[]|null
+   */
+  public $canReadRoles;
+
+  /**
+   * @var string[]|null
+   */
+  public $canReadScopes;
+
+  /**
+   * @var string|null
+   */
+  public $canReadMethod;
+
+  /**
+   * @var string[]|null
+   */
+  public $canUpdateRoles;
+
+  /**
+   * @var string[]|null
+   */
+  public $canUpdateScopes;
+
+  /**
+   * @var string|null
+   */
+  public $canUpdateMethod;
+
+  /**
+   * @var string[]|null
+   */
+  public $canDeleteRoles;
+
+  /**
+   * @var string[]|null
+   */
+  public $canDeleteScopes;
+
+  /**
+   * @var string|null
+   */
+  public $canDeleteMethod;
+
+  /**
+   * @param string $propertyName
+   *
    * @return AccessDefinitionPropertyMetadata
    */
   public function getPropertyMetadata(string $propertyName): ?AccessDefinitionPropertyMetadata {
@@ -23,18 +90,28 @@ class AccessDefinitionClassMetadata extends MergeableClassMetadata {
   }
 
   /**
-   * @param string $propertyName
+   * @param array $data
    *
-   * @return AccessDefinitionPropertyMetadata|null
+   * @return $this
    */
-  public function getManagedPropertyMetadata(string $propertyName): ?AccessDefinitionPropertyMetadata {
-    $propertyMetadata = $this->getPropertyMetadata($propertyName);
+  public function setClassMetadataFromConfigData(array $data): self {
+    $this->canCreateRoles = $data['canCreate']['roles'] ?? null;
+    $this->canCreateScopes = $data['canCreate']['scopes'] ?? null;
+    $this->canCreateScopes = $data['canCreate']['method'] ?? null;
 
-    if (!$propertyMetadata || !$propertyMetadata->managed) {
-      return null;
-    }
+    $this->canReadRoles = $data['canRead']['roles'] ?? null;
+    $this->canReadScopes = $data['canRead']['scopes'] ?? null;
+    $this->canReadMethod = $data['canRead']['method'] ?? null;
 
-    return $propertyMetadata;
+    $this->canUpdateRoles = $data['canUpdate']['roles'] ?? null;
+    $this->canUpdateScopes = $data['canUpdate']['scopes'] ?? null;
+    $this->canUpdateMethod = $data['canUpdate']['method'] ?? null;
+
+    $this->canDeleteRoles = $data['canDelete']['roles'] ?? null;
+    $this->canDeleteScopes = $data['canDelete']['scopes'] ?? null;
+    $this->canDeleteMethod = $data['canDelete']['method'] ?? null;
+
+    return $this;
   }
 
 }
