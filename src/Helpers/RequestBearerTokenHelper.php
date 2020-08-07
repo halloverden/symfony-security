@@ -1,7 +1,7 @@
 <?php
 
 
-namespace HalloVerden\Security\Entity\Helpers;
+namespace HalloVerden\Security\Helpers;
 
 
 use Symfony\Component\HttpFoundation\Request;

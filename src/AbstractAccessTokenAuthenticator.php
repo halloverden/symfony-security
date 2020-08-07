@@ -5,7 +5,7 @@ namespace HalloVerden\Security;
 
 
 use HalloVerden\Contracts\Oidc\Tokens\OidcAccessTokenInterface;
-use HalloVerden\Security\Entity\Helpers\RequestBearerTokenHelper;
+use HalloVerden\Security\Helpers\RequestBearerTokenHelper;
 use HalloVerden\Security\Interfaces\ExpirableInterface;
 use HalloVerden\Security\Interfaces\OauthAuthenticatorServiceInterface;
 use HalloVerden\Security\Interfaces\OauthTokenProviderServiceInterface;
