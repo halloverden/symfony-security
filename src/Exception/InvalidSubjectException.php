@@ -1,7 +1,7 @@
 <?php
 
 
-namespace HalloVerden\Security\Exceptions;
+namespace HalloVerden\Security\Exception;
 
 class InvalidSubjectException extends \RuntimeException {
 
