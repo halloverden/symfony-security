@@ -42,11 +42,6 @@ class HasAccess extends Constraint {
   public $property;
 
   /**
-   * @var string
-   */
-  public $propertyPath;
-
-  /**
    * @var bool
    */
   public $read = false;
