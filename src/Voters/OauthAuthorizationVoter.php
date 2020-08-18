@@ -45,7 +45,7 @@ class OauthAuthorizationVoter extends BaseVoter {
   /**
    * @inheritDoc
    */
-  protected function voteOnAttribute(string $attribute, $subjects, TokenInterface $token) {
+  protected function voteOnAttribute($attribute, $subjects, TokenInterface $token) {
     switch ($attribute) {
       case self::OAUTH_SCOPE:
         return $this->hasOauthScope($this->sortSubjects($subjects, ['string'], false));
