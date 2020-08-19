@@ -3,8 +3,7 @@
 
 namespace HalloVerden\Security\AccessDefinitions\Constraints;
 
-use HalloVerden\Security\Interfaces\AccessDefinitionEntityInterface;
-use HalloVerden\Security\Interfaces\AccessDefinitionInterface;
+use HalloVerden\Security\Services\AccessDefinitionService;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -14,18 +13,19 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  * @package HalloVerden\Security\AccessDefinitions\Constraints
  */
 class HasAccessValidator extends ConstraintValidator {
+
   /**
-   * @var iterable
+   * @var AccessDefinitionService
    */
-  private $accessDefinitions;
+  private $accessDefinitionService;
 
   /**
    * HasAccessValidator constructor.
    *
-   * @param iterable $accessDefinitions
+   * @param AccessDefinitionService $accessDefinitionService
    */
-  public function __construct(iterable $accessDefinitions) {
-    $this->accessDefinitions = $accessDefinitions;
+  public function __construct(AccessDefinitionService $accessDefinitionService) {
+    $this->accessDefinitionService = $accessDefinitionService;
   }
 
   /**
@@ -37,30 +37,29 @@ class HasAccessValidator extends ConstraintValidator {
       throw new UnexpectedTypeException($constraint, HasAccess::class);
     }
 
-    if (!class_exists($constraint->class)) {
-      throw new \RuntimeException('AccessDefinition class ' . $constraint->class  . ' does not exist');
-    }
-
     $context = $this->context;
 
-    foreach ($this->accessDefinitions as $accessDefinition) {
-      if ($accessDefinition instanceof $constraint->class) {
-        if($context->getObject() instanceof AccessDefinitionEntityInterface) {
-          $properties = $context->getObject()->getAccessDefinitionProperties();
-          /* @var $accessDefinition AccessDefinitionInterface */
-          $accessDefinition->setData($properties);
-        }
+    $property = $constraint->property ?: $context->getPropertyName();
+    $class = $constraint->class ?: $context->getClassName();
 
-        $property = $constraint->property;
+    if (null === $class) {
+      throw new \RuntimeException('Class not found, please specify class');
+    }
 
-        if ($constraint->read && !$accessDefinition->canReadProperty($property)) {
-          $context->buildViolation($constraint->noReadAccessMessage)->setParameter('{{ property }}', $property)->setCode(HasAccess::ERROR_NO_READ_ACCESS)->addViolation();
-        }
+    if (null === $class || !class_exists($class)) {
+      throw new \RuntimeException('Class ' . $class. ' does not exist');
+    }
 
-        if ($constraint->write && !$accessDefinition->canWriteProperty($property)) {
-          $context->buildViolation($constraint->noWriteAccessMessage)->setParameter('{{ property }}', $property)->setCode(HasAccess::ERROR_NO_WRITE_ACCESS)->addViolation();
-        }
-      }
+    if (null === $property) {
+      throw new \RuntimeException('Property not found, please specify property');
+    }
+
+    if ($constraint->read && !$this->accessDefinitionService->canReadProperty($constraint->class, $property)) {
+      $context->buildViolation($constraint->noReadAccessMessage)->setParameter('{{ property }}', $property)->setCode(HasAccess::ERROR_NO_READ_ACCESS)->addViolation();
+    }
+
+    if ($constraint->write && !$this->accessDefinitionService->canWriteProperty($constraint->class, $property)) {
+      $context->buildViolation($constraint->noWriteAccessMessage)->setParameter('{{ property }}', $property)->setCode(HasAccess::ERROR_NO_WRITE_ACCESS)->addViolation();
     }
   }
 }

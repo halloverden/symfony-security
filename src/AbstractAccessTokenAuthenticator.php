@@ -5,7 +5,8 @@ namespace HalloVerden\Security;
 
 
 use HalloVerden\Contracts\Oidc\Tokens\OidcAccessTokenInterface;
-use HalloVerden\Security\Entity\Helpers\RequestBearerTokenHelper;
+use HalloVerden\Security\Event\AccessTokenCredentialsCheckEvent;
+use HalloVerden\Security\Helpers\RequestBearerTokenHelper;
 use HalloVerden\Security\Interfaces\ExpirableInterface;
 use HalloVerden\Security\Interfaces\OauthAuthenticatorServiceInterface;
 use HalloVerden\Security\Interfaces\OauthTokenProviderServiceInterface;
@@ -16,6 +17,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 abstract class AbstractAccessTokenAuthenticator extends AbstractAuthenticator {
   const ATTRIBUTE_OAUTH_TOKEN = 'OAUTH_TOKEN';
@@ -41,18 +43,26 @@ abstract class AbstractAccessTokenAuthenticator extends AbstractAuthenticator {
   private $oauthUserProviderService;
 
   /**
+   * @var EventDispatcherInterface
+   */
+  private $dispatcher;
+
+  /**
    * AbstractAccessTokenAuthenticator constructor.
    *
    * @param OauthAuthenticatorServiceInterface $oauthAuthenticatorService
    * @param OauthTokenProviderServiceInterface $oauthTokenProvider
    * @param OauthUserProviderServiceInterface  $oauthUserProviderService
+   * @param EventDispatcherInterface           $dispatcher
    */
   public function __construct(OauthAuthenticatorServiceInterface $oauthAuthenticatorService,
                               OauthTokenProviderServiceInterface $oauthTokenProvider,
-                              OauthUserProviderServiceInterface $oauthUserProviderService) {
+                              OauthUserProviderServiceInterface $oauthUserProviderService,
+                              EventDispatcherInterface $dispatcher) {
     $this->oauthAuthenticatorService = $oauthAuthenticatorService;
     $this->oauthTokenProvider = $oauthTokenProvider;
     $this->oauthUserProviderService = $oauthUserProviderService;
+    $this->dispatcher = $dispatcher;
   }
 
   /**
@@ -117,6 +127,9 @@ abstract class AbstractAccessTokenAuthenticator extends AbstractAuthenticator {
     if ($credentials instanceof ExpirableInterface && $credentials->isExpired()) {
       return false;
     }
+
+    $event = new AccessTokenCredentialsCheckEvent($credentials, $user);
+    $this->dispatcher->dispatch($event);
 
     return true;
   }

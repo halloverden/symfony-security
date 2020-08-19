@@ -32,19 +32,14 @@ class HasAccess extends Constraint {
   public $noWriteAccessMessage = 'No write access to property {{ property }}';
 
   /**
-   * @var string
+   * @var string|null
    */
   public $class;
 
   /**
-   * @var string
+   * @var string|null
    */
   public $property;
-
-  /**
-   * @var string
-   */
-  public $propertyPath;
 
   /**
    * @var bool
