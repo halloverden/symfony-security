@@ -34,7 +34,7 @@ class AccessDefinitionService implements AccessDefinitionServiceInterface {
   private $allowNoMetadata;
 
   /**
-   * AccessDefinition2Service constructor.
+   * AccessDefinitionService constructor.
    *
    * @param MetadataFactoryInterface $metadataFactory
    * @param SecurityInterface        $security
