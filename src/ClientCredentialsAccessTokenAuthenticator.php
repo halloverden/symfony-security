@@ -15,4 +15,11 @@ class ClientCredentialsAccessTokenAuthenticator extends AbstractAccessTokenAuthe
     return OidcTokenInterface::TYPE_ACCESS_CLIENT_CREDENTIALS;
   }
 
+  /**
+   * @inheritDoc
+   */
+  protected function specificAuthenticatorRequired(): bool {
+    return true;
+  }
+
 }
