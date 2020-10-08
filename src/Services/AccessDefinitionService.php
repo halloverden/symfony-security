@@ -164,7 +164,7 @@ class AccessDefinitionService implements AccessDefinitionServiceInterface {
       return true;
     }
 
-    return false;
+    return $this->allowNoMetadata;
   }
 
 }
