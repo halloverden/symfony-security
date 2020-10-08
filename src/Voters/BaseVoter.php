@@ -6,6 +6,7 @@ namespace HalloVerden\Security\Voters;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use HalloVerden\Security\Exception\InvalidSubjectException;
+use HalloVerden\Security\Interfaces\AccessDefinitionServiceInterface;
 use HalloVerden\Security\Interfaces\SecurityInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -22,6 +23,11 @@ abstract class BaseVoter extends Voter {
   protected $security;
 
   /**
+   * @var AccessDefinitionServiceInterface
+   */
+  protected $accessDefinitionService;
+
+  /**
    * BaseVoter constructor.
    *
    * @param SecurityInterface $security
@@ -32,6 +38,16 @@ abstract class BaseVoter extends Voter {
 
   protected abstract function getSupportedAttributes(): array;
   protected abstract function getSupportedClasses(): array;
+
+  /**
+   * @param AccessDefinitionServiceInterface $accessDefinitionService
+   *
+   * @return $this
+   */
+  public function setAccessDefinitionService(AccessDefinitionServiceInterface $accessDefinitionService): self {
+    $this->accessDefinitionService = $accessDefinitionService;
+    return $this;
+  }
 
   /**
    * Determines if the attribute and subject are supported by this voter.
