@@ -54,7 +54,7 @@ class AccessDefinitionService implements AccessDefinitionServiceInterface {
       return $this->allowNoMetadata;
     }
 
-    return $this->canHandle($class, $metadata->canCreateScopes, $metadata->canCreateRoles, null);
+    return $this->canHandle($class, $metadata->canCreateScopes, $metadata->canCreateRoles, $metadata->canCreateMethod);
   }
 
   /**
@@ -65,7 +65,7 @@ class AccessDefinitionService implements AccessDefinitionServiceInterface {
       return $this->allowNoMetadata;
     }
 
-    return $this->canHandle($class, $metadata->canReadScopes, $metadata->canReadRoles, null);
+    return $this->canHandle($class, $metadata->canReadScopes, $metadata->canReadRoles, $metadata->canReadMethod);
   }
 
   /**
@@ -76,7 +76,7 @@ class AccessDefinitionService implements AccessDefinitionServiceInterface {
       return $this->allowNoMetadata;
     }
 
-    return $this->canHandle($class, $metadata->canUpdateScopes, $metadata->canUpdateRoles, null);
+    return $this->canHandle($class, $metadata->canUpdateScopes, $metadata->canUpdateRoles, $metadata->canUpdateMethod);
   }
 
   /**
@@ -87,7 +87,7 @@ class AccessDefinitionService implements AccessDefinitionServiceInterface {
       return $this->allowNoMetadata;
     }
 
-    return $this->canHandle($class, $metadata->canDeleteScopes, $metadata->canDeleteRoles, null);
+    return $this->canHandle($class, $metadata->canDeleteScopes, $metadata->canDeleteRoles, $metadata->canDeleteMethod);
   }
 
   /**
