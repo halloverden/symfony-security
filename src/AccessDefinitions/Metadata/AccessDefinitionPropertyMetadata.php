@@ -41,7 +41,7 @@ class AccessDefinitionPropertyMetadata extends PropertyMetadata {
   public function setPropertyMetadataFromConfigData(array $data): self {
     if (isset($data['canRead']['everyone'])) {
       $this->canReadEveryone = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canRead']['everyone']);
-    } elseif ($data['canRead']) {
+    } elseif (isset($data['canRead'])) {
       $this->canReadEveryone = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canRead']);
     }
 
