@@ -14,34 +14,24 @@ use Metadata\PropertyMetadata;
 class AccessDefinitionPropertyMetadata extends PropertyMetadata {
 
   /**
-   * @var array|null
+   * @var AccessDefinitionMetadata|null
    */
-  public $readRoles;
+  public $canReadEveryone;
 
   /**
-   * @var array|null
+   * @var AccessDefinitionMetadata|null
    */
-  public $writeRoles;
+  public $canWriteEveryone;
 
   /**
-   * @var string|null
+   * @var AccessDefinitionMetadata|null
    */
-  public $readMethod;
+  public $canReadOwner;
 
   /**
-   * @var string|null
+   * @var AccessDefinitionMetadata|null
    */
-  public $writeMethod;
-
-  /**
-   * @var array|null
-   */
-  public $readScopes;
-
-  /**
-   * @var array|null
-   */
-  public $writeScopes;
+  public $canWriteOwner;
 
   /**
    * @param array $data
@@ -49,13 +39,25 @@ class AccessDefinitionPropertyMetadata extends PropertyMetadata {
    * @return $this
    */
   public function setPropertyMetadataFromConfigData(array $data): self {
-    $this->readRoles = $data['canRead']['roles'] ?? null;
-    $this->readScopes = $data['canRead']['scopes'] ?? null;
-    $this->readMethod = $data['canRead']['method'] ?? null;
+    if (isset($data['canRead']['everyone'])) {
+      $this->canReadEveryone = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canRead']['everyone']);
+    } elseif ($data['canRead']) {
+      $this->canReadEveryone = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canRead']);
+    }
 
-    $this->writeRoles = $data['canWrite']['roles'] ?? null;
-    $this->writeScopes = $data['canWrite']['scopes'] ?? null;
-    $this->writeMethod = $data['canWrite']['method'] ?? null;
+    if (isset($data['canWrite']['everyone'])) {
+      $this->canWriteEveryone = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canWrite']['everyone']);
+    } elseif (isset($data['canWrite'])) {
+      $this->canWriteEveryone = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canWrite']);
+    }
+
+    if (isset($data['canRead']['owner'])) {
+      $this->canReadOwner = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canRead']['owner']);
+    }
+
+    if (isset($data['canWrite']['owner'])) {
+      $this->canWriteOwner = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canWrite']['owner']);
+    }
 
     return $this;
   }
@@ -65,12 +67,10 @@ class AccessDefinitionPropertyMetadata extends PropertyMetadata {
    */
   public function serialize() {
     return serialize([
-      $this->readRoles,
-      $this->writeRoles,
-      $this->readMethod,
-      $this->writeMethod,
-      $this->readScopes,
-      $this->writeScopes,
+      $this->canReadEveryone,
+      $this->canReadOwner,
+      $this->canWriteEveryone,
+      $this->canWriteOwner,
       parent::serialize()
     ]);
   }
@@ -81,12 +81,10 @@ class AccessDefinitionPropertyMetadata extends PropertyMetadata {
   public function unserialize($str) {
     $unserialized = unserialize($str);
     [
-      $this->readRoles,
-      $this->writeRoles,
-      $this->readMethod,
-      $this->writeMethod,
-      $this->readScopes,
-      $this->writeScopes,
+      $this->canReadEveryone,
+      $this->canReadOwner,
+      $this->canWriteEveryone,
+      $this->canWriteOwner,
       $parentStr
     ] = $unserialized;
 

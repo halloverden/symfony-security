@@ -46,6 +46,12 @@ class AccessDefinitionConfiguration implements ConfigurationInterface {
     $root = $root->arrayNode($name)
       ->children();
 
+    $ownerSection = $root->arrayNode('owner')->children();
+    $this->addScopesRolesMethodSection($ownerSection);
+
+    $everyoneSection = $root->arrayNode('everyone')->children();
+    $this->addScopesRolesMethodSection($everyoneSection);
+
     $this->addScopesRolesMethodSection($root);
 
     $root->end();

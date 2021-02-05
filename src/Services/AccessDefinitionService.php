@@ -6,9 +6,8 @@ namespace HalloVerden\Security\Services;
 
 use HalloVerden\Security\AccessDefinitions\Metadata\AccessDefinitionClassMetadata;
 use HalloVerden\Security\AccessDefinitions\Metadata\AccessDefinitionPropertyMetadata;
+use HalloVerden\Security\Interfaces\AccessDefinitionAccessDeciderServiceInterface;
 use HalloVerden\Security\Interfaces\AccessDefinitionServiceInterface;
-use HalloVerden\Security\Interfaces\SecurityInterface;
-use HalloVerden\Security\Voters\OauthAuthorizationVoter;
 use Metadata\MetadataFactoryInterface;
 
 /**
@@ -24,92 +23,116 @@ class AccessDefinitionService implements AccessDefinitionServiceInterface {
   private $metadataFactory;
 
   /**
-   * @var SecurityInterface
-   */
-  private $security;
-
-  /**
    * @var bool
    */
   private $allowNoMetadata;
 
   /**
+   * @var AccessDefinitionAccessDeciderServiceInterface
+   */
+  private $accessDeciderService;
+
+  /**
    * AccessDefinitionService constructor.
    *
-   * @param MetadataFactoryInterface $metadataFactory
-   * @param SecurityInterface        $security
-   * @param bool                     $allowNoMetadata
+   * @param MetadataFactoryInterface                      $metadataFactory
+   * @param AccessDefinitionAccessDeciderServiceInterface $accessDeciderService
+   * @param bool                                          $allowNoMetadata
    */
-  public function __construct(MetadataFactoryInterface $metadataFactory, SecurityInterface $security, bool $allowNoMetadata = true) {
+  public function __construct(MetadataFactoryInterface $metadataFactory, AccessDefinitionAccessDeciderServiceInterface $accessDeciderService, bool $allowNoMetadata = true) {
     $this->metadataFactory = $metadataFactory;
-    $this->security = $security;
     $this->allowNoMetadata = $allowNoMetadata;
+    $this->accessDeciderService = $accessDeciderService;
   }
 
   /**
    * @inheritDoc
    */
-  public function canCreate(string $class): bool {
+  public function canCreate(string $class, bool $isOwner = false): bool {
     if (null === $metadata = $this->getMetadata($class)) {
       return $this->allowNoMetadata;
     }
 
-    return $this->canHandle($class, $metadata->canCreateScopes, $metadata->canCreateRoles, $metadata->canCreateMethod);
+    if ($isOwner && $this->accessDeciderService->canHandle($metadata->canCreateOwner)) {
+      return true;
+    }
+
+    return $this->accessDeciderService->canHandle($metadata->canCreateEveryone);
   }
 
   /**
    * @inheritDoc
    */
-  public function canRead(string $class): bool {
+  public function canRead(string $class, bool $isOwner = false): bool {
     if (null === $metadata = $this->getMetadata($class)) {
       return $this->allowNoMetadata;
     }
 
-    return $this->canHandle($class, $metadata->canReadScopes, $metadata->canReadRoles, $metadata->canReadMethod);
+    if ($isOwner && $this->accessDeciderService->canHandle($metadata->canReadOwner)) {
+      return true;
+    }
+
+    return $this->accessDeciderService->canHandle($metadata->canReadEveryone);
   }
 
   /**
    * @inheritDoc
    */
-  public function canUpdate(string $class): bool {
+  public function canUpdate(string $class, bool $isOwner = false): bool {
     if (null === $metadata = $this->getMetadata($class)) {
       return $this->allowNoMetadata;
     }
 
-    return $this->canHandle($class, $metadata->canUpdateScopes, $metadata->canUpdateRoles, $metadata->canUpdateMethod);
+    if ($isOwner && $this->accessDeciderService->canHandle($metadata->canUpdateOwner)) {
+      return true;
+    }
+
+    return $this->accessDeciderService->canHandle($metadata->canUpdateEveryone);
   }
 
   /**
    * @inheritDoc
    */
-  public function canDelete(string $class): bool {
+  public function canDelete(string $class, bool $isOwner = false): bool {
     if (null === $metadata = $this->getMetadata($class)) {
       return $this->allowNoMetadata;
     }
 
-    return $this->canHandle($class, $metadata->canDeleteScopes, $metadata->canDeleteRoles, $metadata->canDeleteMethod);
+    if ($isOwner && $this->accessDeciderService->canHandle($metadata->canDeleteOwner)) {
+      return true;
+    }
+
+    return $this->accessDeciderService->canHandle($metadata->canDeleteEveryone);
   }
 
   /**
    * @inheritDoc
    */
-  public function canReadProperty(string $class, string $property): bool {
+  public function canReadProperty(string $class, string $property, bool $isOwner = false): bool {
     if (null === $propertyMetadata = $this->getPropertyMetadata($class, $property)) {
       return $this->allowNoMetadata;
     }
 
-    return $this->canHandle($class, $propertyMetadata->readScopes, $propertyMetadata->readRoles, $propertyMetadata->readMethod);
+    if ($isOwner && $this->accessDeciderService->canHandle($propertyMetadata->canReadOwner)) {
+      return true;
+    }
+
+    return $this->accessDeciderService->canHandle($propertyMetadata->canReadEveryone);
   }
 
   /**
    * @inheritDoc
    */
-  public function canWriteProperty(string $class, string $property): bool {
+  public function canWriteProperty(string $class, string $property, bool $isOwner = false): bool {
     if (null === $propertyMetadata = $this->getPropertyMetadata($class, $property)) {
       return $this->allowNoMetadata;
     }
 
-    return $this->canHandle($class, $propertyMetadata->writeScopes, $propertyMetadata->writeRoles, $propertyMetadata->writeMethod);
+    if ($isOwner && $this->accessDeciderService->canHandle($propertyMetadata->canWriteOwner)) {
+      return true;
+    }
+
+    return $this->accessDeciderService->canHandle($propertyMetadata->canWriteEveryone);
   }
 
   /**
@@ -139,32 +162,6 @@ class AccessDefinitionService implements AccessDefinitionServiceInterface {
     }
 
     return $metadata;
-  }
-
-  /**
-   * @param string      $class
-   * @param array|null  $scopes
-   * @param array|null  $roles
-   * @param string|null $method
-   *
-   * @return bool
-   */
-  private function canHandle(string $class, ?array $scopes, ?array $roles, ?string $method): bool {
-    // If a token exists with any of the given scopes, access is granted
-    if ($scopes !== null && $this->security->isGranted(OauthAuthorizationVoter::OAUTH_SCOPE, $scopes)) {
-      return true;
-    }
-
-    // Otherwise, either the correct role needs to be present, or a method needs to grant access
-    if ($roles !== null && $this->security->isGrantedEitherOf($roles)) {
-      return true;
-    }
-
-    if ($method !== null && $method($class, $scopes, $roles, $method)) {
-      return true;
-    }
-
-    return false;
   }
 
 }
