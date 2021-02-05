@@ -9,7 +9,6 @@ use HalloVerden\Security\AccessDefinitions\Metadata\AccessDefinitionConfiguratio
 use HalloVerden\Security\AccessDefinitions\Metadata\AccessDefinitionPropertyMetadata;
 use Metadata\ClassMetadata;
 use Metadata\Driver\AbstractFileDriver;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Yaml\Yaml;
 
@@ -37,10 +36,6 @@ class AccessDefinitionYamlDriver extends AbstractFileDriver {
     $metadata->setClassMetadataFromConfigData($data);
 
     foreach ($data['properties'] as $propertyName => $propertyData) {
-      if (!$class->hasProperty($propertyName)) {
-        throw new InvalidConfigurationException(\sprintf('Class %s does not have property %s. Check access definition config %s', $name, $propertyName, $file));
-      }
-
       $propertyMetadata = new AccessDefinitionPropertyMetadata($name, $propertyName);
       $propertyMetadata->setPropertyMetadataFromConfigData($propertyData);
 
