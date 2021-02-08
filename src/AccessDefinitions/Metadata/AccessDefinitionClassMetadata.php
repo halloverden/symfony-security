@@ -75,44 +75,12 @@ class AccessDefinitionClassMetadata extends MergeableClassMetadata {
    * @return $this
    */
   public function setClassMetadataFromConfigData(array $data): self {
-    if (isset($data['canCreate']['everyone'])) {
-      $this->canCreateEveryone = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canCreate']['everyone']);
-    } elseif (isset($data['canCreate'])) {
-      $this->canCreateEveryone = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canCreate']);
-    }
-
-    if (isset($data['canRead']['everyone'])) {
-      $this->canReadEveryone = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canRead']['everyone']);
-    } elseif (isset($data['canRead'])) {
-      $this->canReadEveryone = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canRead']);
-    }
-
-    if (isset($data['canUpdate']['everyone'])) {
-      $this->canUpdateEveryone = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canUpdate']['everyone']);
-    } elseif (isset($data['canUpdate'])) {
-      $this->canUpdateEveryone = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canUpdate']);
-    }
-
-    if (isset($data['canDelete']['everyone'])) {
-      $this->canDeleteEveryone = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canDelete']['everyone']);
-    } elseif (isset($data['canDelete'])) {
-      $this->canDeleteEveryone = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canDelete']);
-    }
-
-    if (isset($data['canCreate']['owner'])) {
-      $this->canCreateOwner = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canCreate']['owner']);
-    }
-
-    if (isset($data['canRead']['owner'])) {
-      $this->canReadOwner = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canRead']['owner']);
-    }
-
-    if (isset($data['canUpdate']['owner'])) {
-      $this->canUpdateOwner = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canUpdate']['owner']);
-    }
-
-    if (isset($data['canDelete']['owner'])) {
-      $this->canDeleteOwner = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data['canDelete']['owner']);
+    foreach ($data as $access => $value) {
+      foreach ($value as $type => $v) {
+        if (\property_exists($this, $property = $access . \ucfirst($type))) {
+          $this->$property = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data[$access][$type]);
+        }
+      }
     }
 
     return $this;
