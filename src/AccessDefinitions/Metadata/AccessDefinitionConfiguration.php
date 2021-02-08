@@ -54,7 +54,17 @@ class AccessDefinitionConfiguration implements ConfigurationInterface {
 
     $this->addScopesRolesMethodSection($root);
 
-    $root->end();
+    $root->end()->beforeNormalization()->always(function ($value) {
+      // Put all properties that does not specify owner or everyone, in everyone.
+      foreach ($value as $key => $v) {
+        if ($key !== 'owner' && $key !== 'everyone') {
+          $value['everyone'] = [$key => $v];
+          unset($value[$key]);
+        }
+      }
+
+      return $value;
+    });
   }
 
   /**
