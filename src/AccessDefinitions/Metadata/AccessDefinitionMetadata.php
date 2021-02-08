@@ -31,9 +31,11 @@ class AccessDefinitionMetadata {
    * @return AccessDefinitionMetadata
    */
   public function setMetadataFromConfigData(array $data): self {
-    $this->roles = $data['roles'] ?? null;
-    $this->scopes = $data['scopes'] ?? null;
-    $this->method = $data['method'] ?? null;
+    foreach ($data as $property => $value) {
+      if (\property_exists($this, $property)) {
+        $this->$property = $value;
+      }
+    }
 
     return $this;
   }
