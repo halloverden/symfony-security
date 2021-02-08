@@ -33,7 +33,7 @@ class AccessDefinitionYamlDriver extends AbstractFileDriver {
 
     $data = $config[$name];
 
-    $metadata->setClassMetadataFromConfigData($data);
+    $metadata->setMetadataFromConfigData($data);
 
     foreach ($data['properties'] as $propertyName => $propertyData) {
       $propertyMetadata = new AccessDefinitionPropertyMetadata($name, $propertyName);

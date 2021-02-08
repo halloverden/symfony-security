@@ -4,6 +4,7 @@
 namespace HalloVerden\Security\AccessDefinitions\Metadata;
 
 
+use HalloVerden\Security\Traits\SetAccessDefinitionMetadataTrait;
 use Metadata\MergeableClassMetadata;
 
 /**
@@ -12,6 +13,7 @@ use Metadata\MergeableClassMetadata;
  * @package HalloVerden\Security\AccessDefinitions\Metadata
  */
 class AccessDefinitionClassMetadata extends MergeableClassMetadata {
+  use SetAccessDefinitionMetadataTrait;
 
   /**
    * @var AccessDefinitionMetadata|null
@@ -67,23 +69,6 @@ class AccessDefinitionClassMetadata extends MergeableClassMetadata {
     }
 
     return null;
-  }
-
-  /**
-   * @param array $data
-   *
-   * @return $this
-   */
-  public function setClassMetadataFromConfigData(array $data): self {
-    foreach ($data as $access => $value) {
-      foreach ($value as $type => $v) {
-        if (\property_exists($this, $property = $access . \ucfirst($type))) {
-          $this->$property = (new AccessDefinitionMetadata())->setMetadataFromConfigData($data[$access][$type]);
-        }
-      }
-    }
-
-    return $this;
   }
 
   /**
