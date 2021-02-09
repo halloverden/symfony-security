@@ -13,6 +13,6 @@ interface AccessDefinitionAccessDeciderServiceInterface {
    *
    * @return bool
    */
-  public function canHandle(?AccessDefinitionMetadata $metadata): bool;
+  public function hasAccessDefinedAccess(?AccessDefinitionMetadata $metadata): bool;
 
 }

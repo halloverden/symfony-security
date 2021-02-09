@@ -43,7 +43,7 @@ class AccessDefinitionAccessDeciderService implements AccessDefinitionAccessDeci
   /**
    * @inheritDoc
    */
-  public function canHandle(?AccessDefinitionMetadata $metadata): bool {
+  public function hasAccessDefinedAccess(?AccessDefinitionMetadata $metadata): bool {
     // Nothing specified = access NOT granted.
     if (null === $metadata || (null === $metadata->method && null === $metadata->scopes && null === $metadata->roles)) {
       return false;

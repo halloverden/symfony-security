@@ -53,11 +53,11 @@ class AccessDefinitionService implements AccessDefinitionServiceInterface {
       return $this->allowNoMetadata;
     }
 
-    if ($isOwner && $this->accessDeciderService->canHandle($metadata->canCreateOwner)) {
+    if ($isOwner && $this->accessDeciderService->hasAccessDefinedAccess($metadata->canCreateOwner)) {
       return true;
     }
 
-    return $this->accessDeciderService->canHandle($metadata->canCreateEveryone);
+    return $this->accessDeciderService->hasAccessDefinedAccess($metadata->canCreateEveryone);
   }
 
   /**
@@ -68,11 +68,11 @@ class AccessDefinitionService implements AccessDefinitionServiceInterface {
       return $this->allowNoMetadata;
     }
 
-    if ($isOwner && $this->accessDeciderService->canHandle($metadata->canReadOwner)) {
+    if ($isOwner && $this->accessDeciderService->hasAccessDefinedAccess($metadata->canReadOwner)) {
       return true;
     }
 
-    return $this->accessDeciderService->canHandle($metadata->canReadEveryone);
+    return $this->accessDeciderService->hasAccessDefinedAccess($metadata->canReadEveryone);
   }
 
   /**
@@ -83,11 +83,11 @@ class AccessDefinitionService implements AccessDefinitionServiceInterface {
       return $this->allowNoMetadata;
     }
 
-    if ($isOwner && $this->accessDeciderService->canHandle($metadata->canUpdateOwner)) {
+    if ($isOwner && $this->accessDeciderService->hasAccessDefinedAccess($metadata->canUpdateOwner)) {
       return true;
     }
 
-    return $this->accessDeciderService->canHandle($metadata->canUpdateEveryone);
+    return $this->accessDeciderService->hasAccessDefinedAccess($metadata->canUpdateEveryone);
   }
 
   /**
@@ -98,11 +98,11 @@ class AccessDefinitionService implements AccessDefinitionServiceInterface {
       return $this->allowNoMetadata;
     }
 
-    if ($isOwner && $this->accessDeciderService->canHandle($metadata->canDeleteOwner)) {
+    if ($isOwner && $this->accessDeciderService->hasAccessDefinedAccess($metadata->canDeleteOwner)) {
       return true;
     }
 
-    return $this->accessDeciderService->canHandle($metadata->canDeleteEveryone);
+    return $this->accessDeciderService->hasAccessDefinedAccess($metadata->canDeleteEveryone);
   }
 
   /**
@@ -113,11 +113,11 @@ class AccessDefinitionService implements AccessDefinitionServiceInterface {
       return $this->allowNoMetadata;
     }
 
-    if ($isOwner && $this->accessDeciderService->canHandle($propertyMetadata->canReadOwner)) {
+    if ($isOwner && $this->accessDeciderService->hasAccessDefinedAccess($propertyMetadata->canReadOwner)) {
       return true;
     }
 
-    return $this->accessDeciderService->canHandle($propertyMetadata->canReadEveryone);
+    return $this->accessDeciderService->hasAccessDefinedAccess($propertyMetadata->canReadEveryone);
   }
 
   /**
@@ -128,11 +128,11 @@ class AccessDefinitionService implements AccessDefinitionServiceInterface {
       return $this->allowNoMetadata;
     }
 
-    if ($isOwner && $this->accessDeciderService->canHandle($propertyMetadata->canWriteOwner)) {
+    if ($isOwner && $this->accessDeciderService->hasAccessDefinedAccess($propertyMetadata->canWriteOwner)) {
       return true;
     }
 
-    return $this->accessDeciderService->canHandle($propertyMetadata->canWriteEveryone);
+    return $this->accessDeciderService->hasAccessDefinedAccess($propertyMetadata->canWriteEveryone);
   }
 
   /**
