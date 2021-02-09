@@ -4,6 +4,7 @@
 namespace HalloVerden\Security\AccessDefinitions\Metadata;
 
 
+use HalloVerden\Security\Traits\SetAccessDefinitionMetadataTrait;
 use Metadata\PropertyMetadata;
 
 /**
@@ -12,65 +13,37 @@ use Metadata\PropertyMetadata;
  * @package HalloVerden\Security\AccessDefinitions\Metadata
  */
 class AccessDefinitionPropertyMetadata extends PropertyMetadata {
+  use SetAccessDefinitionMetadataTrait;
 
   /**
-   * @var array|null
+   * @var AccessDefinitionMetadata|null
    */
-  public $readRoles;
+  public $canReadEveryone;
 
   /**
-   * @var array|null
+   * @var AccessDefinitionMetadata|null
    */
-  public $writeRoles;
+  public $canWriteEveryone;
 
   /**
-   * @var string|null
+   * @var AccessDefinitionMetadata|null
    */
-  public $readMethod;
+  public $canReadOwner;
 
   /**
-   * @var string|null
+   * @var AccessDefinitionMetadata|null
    */
-  public $writeMethod;
-
-  /**
-   * @var array|null
-   */
-  public $readScopes;
-
-  /**
-   * @var array|null
-   */
-  public $writeScopes;
-
-  /**
-   * @param array $data
-   *
-   * @return $this
-   */
-  public function setPropertyMetadataFromConfigData(array $data): self {
-    $this->readRoles = $data['canRead']['roles'] ?? null;
-    $this->readScopes = $data['canRead']['scopes'] ?? null;
-    $this->readMethod = $data['canRead']['method'] ?? null;
-
-    $this->writeRoles = $data['canWrite']['roles'] ?? null;
-    $this->writeScopes = $data['canWrite']['scopes'] ?? null;
-    $this->writeMethod = $data['canWrite']['method'] ?? null;
-
-    return $this;
-  }
+  public $canWriteOwner;
 
   /**
    * @return string
    */
   public function serialize() {
     return serialize([
-      $this->readRoles,
-      $this->writeRoles,
-      $this->readMethod,
-      $this->writeMethod,
-      $this->readScopes,
-      $this->writeScopes,
+      $this->canReadEveryone,
+      $this->canReadOwner,
+      $this->canWriteEveryone,
+      $this->canWriteOwner,
       parent::serialize()
     ]);
   }
@@ -81,12 +54,10 @@ class AccessDefinitionPropertyMetadata extends PropertyMetadata {
   public function unserialize($str) {
     $unserialized = unserialize($str);
     [
-      $this->readRoles,
-      $this->writeRoles,
-      $this->readMethod,
-      $this->writeMethod,
-      $this->readScopes,
-      $this->writeScopes,
+      $this->canReadEveryone,
+      $this->canReadOwner,
+      $this->canWriteEveryone,
+      $this->canWriteOwner,
       $parentStr
     ] = $unserialized;
 
