@@ -13,6 +13,6 @@ interface AccessDefinitionOwnerAwareInterface {
   /**
    * @return AccessDefinitionOwnerInterface
    */
-  public function getAccessDefinitionOwner(): ?AccessDefinitionOwnerInterface;
+  public function getAccessDefinitionObjectOwner(): ?AccessDefinitionOwnerInterface;
 
 }
