@@ -79,7 +79,7 @@ class HasAccessFunction {
     $owner = $object->getAccessDefinitionOwner();
     $user = $this->getAuthenticatedUser();
 
-    return null !== $owner && null !== $user && $owner->equalAccessDefinitionOwner($user);
+    return null !== $owner && null !== $user && $owner->isEqualToAccessDefinitionOwner($user);
   }
 
   /**

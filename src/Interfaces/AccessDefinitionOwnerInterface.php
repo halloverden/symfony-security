@@ -15,6 +15,6 @@ interface AccessDefinitionOwnerInterface {
    *
    * @return bool
    */
-  public function equalAccessDefinitionOwner(AccessDefinitionOwnerInterface $owner): bool;
+  public function isEqualToAccessDefinitionOwner(AccessDefinitionOwnerInterface $owner): bool;
 
 }
