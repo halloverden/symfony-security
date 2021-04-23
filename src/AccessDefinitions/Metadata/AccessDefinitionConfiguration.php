@@ -77,7 +77,8 @@ class AccessDefinitionConfiguration implements ConfigurationInterface {
       ->arrayNode('scopes')
         ->scalarPrototype()->end()
       ->end()
-      ->scalarNode('method')->end();
+      ->scalarNode('method')->end()
+      ->scalarNode('expression')->end();
   }
 
 }

@@ -26,6 +26,11 @@ class AccessDefinitionMetadata {
   public $method;
 
   /**
+   * @var string|null
+   */
+  public $expression;
+
+  /**
    * @param array $data
    *
    * @return AccessDefinitionMetadata
