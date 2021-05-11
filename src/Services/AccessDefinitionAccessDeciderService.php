@@ -11,6 +11,7 @@ use HalloVerden\Security\Interfaces\AccessDefinitionAccessDeciderServiceInterfac
 use HalloVerden\Security\Interfaces\SecurityInterface;
 use HalloVerden\Security\Voters\AuthenticationVoter;
 use HalloVerden\Security\Voters\OauthAuthorizationVoter;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 /**
  * Class AccessDefinitionAccessDeciderService
@@ -30,14 +31,20 @@ class AccessDefinitionAccessDeciderService implements AccessDefinitionAccessDeci
   private $scopeableAuthenticators;
 
   /**
+   * @var ExpressionLanguage
+   */
+  private $expressionLanguage;
+
+  /**
    * AccessDefinitionAccessDeciderService constructor.
    *
    * @param SecurityInterface $security
    * @param array|null        $scopeableAuthenticators
    */
-  public function __construct(SecurityInterface $security, ?array $scopeableAuthenticators = null) {
+  public function __construct(SecurityInterface $security, ?array $scopeableAuthenticators = null, ?ExpressionLanguage $expressionLanguage = null) {
     $this->scopeableAuthenticators = $scopeableAuthenticators ?? [AccessTokenAuthenticator::class, ClientCredentialsAccessTokenAuthenticator::class];
     $this->security = $security;
+    $this->expressionLanguage = $expressionLanguage ?: new ExpressionLanguage();
   }
 
   /**
@@ -45,12 +52,16 @@ class AccessDefinitionAccessDeciderService implements AccessDefinitionAccessDeci
    */
   public function hasAccessDefinedAccess(?AccessDefinitionMetadata $metadata): bool {
     // Nothing specified = access NOT granted.
-    if (null === $metadata || (null === $metadata->method && null === $metadata->scopes && null === $metadata->roles)) {
+    if (null === $metadata || (null === $metadata->method && null === $metadata->scopes && null === $metadata->roles && null === $metadata->expression)) {
       return false;
     }
 
     // If a method is defined, this takes precedence if true.
     if (null !== $metadata->method && is_callable($metadata->method) && ($metadata->method)($metadata)) {
+      return true;
+    }
+
+    if (null !== $metadata->expression && $this->expressionLanguage->evaluate($metadata->expression, ['metadata' => $metadata])) {
       return true;
     }
 
