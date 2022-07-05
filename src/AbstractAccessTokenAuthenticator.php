@@ -81,16 +81,16 @@ abstract class AbstractAccessTokenAuthenticator extends AbstractAuthenticator {
     }
 
     try {
-      $jwt = $this->oauthAuthenticatorService->validateAndGetAccessToken($bearerToken);
+      $claims = $this->oauthAuthenticatorService->validateAndGetAccessToken($bearerToken);
     } catch (\Exception $e) {
       return false;
     }
 
-    if ($jwt->claims->get('type') !== $this->getTokenType()) {
+    if ($claims['type']!== $this->getTokenType()) {
       return false;
     }
 
-    $this->accessToken = $this->oauthTokenProvider->getOauthTokenFromJWT($jwt, $bearerToken);
+    $this->accessToken = $this->oauthTokenProvider->getOauthTokenFromJWT($claims, $bearerToken);
 
     return $this->accessToken !== null;
   }

@@ -8,8 +8,17 @@ use HalloVerden\Contracts\Oidc\Tokens\OidcTokenInterface;
 use HalloVerden\Security\ClaimCheckers\TokenTypeChecker;
 use HalloVerden\Security\Interfaces\OauthAuthenticatorServiceInterface;
 use HalloVerden\Security\Interfaces\OauthJwkSetProviderServiceInterface;
-use Jose\Easy\JWT;
-use Jose\Easy\Load;
+use Jose\Component\Checker\ClaimCheckerManager;
+use Jose\Component\Checker\ExpirationTimeChecker;
+use Jose\Component\Checker\IssuedAtChecker;
+use Jose\Component\Checker\IssuerChecker;
+use Jose\Component\Core\AlgorithmManager;
+use Jose\Component\Core\Util\JsonConverter;
+use Jose\Component\Signature\Algorithm\RS256;
+use Jose\Component\Signature\JWSLoader;
+use Jose\Component\Signature\JWSVerifier;
+use Jose\Component\Signature\Serializer\CompactSerializer;
+use Jose\Component\Signature\Serializer\JWSSerializerManager;
 
 /**
  * Class OauthAuthenticatorService
@@ -65,15 +74,26 @@ class OauthAuthenticatorService implements OauthAuthenticatorServiceInterface {
   /**
    * @inheritDoc
    */
-  public function validateAndGetAccessToken(string $token): JWT {
-    return Load::jws($token)
-      ->exp(100)
-      ->iat(100)
-      ->iss($this->issuer)
-      ->keyset($this->oauthJwkSetProvider->getPublicKey($this->issuer))
-      ->mandatory($this->getMandatoryClaims())
-      ->claim('type', new TokenTypeChecker($this->getValidAccessTokenTypes()))
-      ->run();
+  public function validateAndGetAccessToken(string $token): array {
+    $algorithmManager = new AlgorithmManager([new RS256()]);
+    $jwsVerifier = new JWSVerifier($algorithmManager);
+    $serializerManager = new JWSSerializerManager([new CompactSerializer()]);
+    $jwsLoader = new JWSLoader($serializerManager, $jwsVerifier, null);
+
+
+    $jws = $jwsLoader->loadAndVerifyWithKeySet($token, $this->oauthJwkSetProvider->getPublicKey($this->issuer), $signature);
+
+    $claimCheckerManager = new ClaimCheckerManager([
+      new IssuedAtChecker(100),
+      new ExpirationTimeChecker(100),
+      new IssuerChecker([$this->issuer]),
+      new TokenTypeChecker($this->getValidAccessTokenTypes())
+    ]);
+
+    $claims = JsonConverter::decode($jws->getPayload());
+    $claimCheckerManager->check($claims);
+
+    return $claims;
   }
 
   /**

@@ -4,16 +4,14 @@
 namespace HalloVerden\Security\Interfaces;
 
 
-use Jose\Easy\JWT;
-
 interface OauthAuthenticatorServiceInterface {
 
   /**
    * @param string $token
    *
-   * @return JWT
+   * @return array claims
    * @throws \Exception
    */
-  public function validateAndGetAccessToken(string $token): JWT;
+  public function validateAndGetAccessToken(string $token): array;
 
 }

@@ -5,16 +5,15 @@ namespace HalloVerden\Security\Interfaces;
 
 
 use HalloVerden\Contracts\Oidc\Tokens\OidcAccessTokenInterface;
-use Jose\Easy\JWT;
 
 interface OauthTokenProviderServiceInterface {
 
   /**
-   * @param JWT    $jwt
+   * @param array  $claims
    * @param string $rawToken
    *
    * @return OidcAccessTokenInterface|null
    */
-  public function getOauthTokenFromJWT(JWT $jwt, string $rawToken): ?OidcAccessTokenInterface;
+  public function getOauthTokenFromJWT(array $claims, string $rawToken): ?OidcAccessTokenInterface;
 
 }
