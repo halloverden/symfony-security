@@ -23,7 +23,7 @@
         "doctrine/collections": "^1.6",
         "symfony/security-guard": "^v4.4.13|^5.1.5",
         "halloverden/symfony-http-exceptions": "^1.0.1",
-        "halloverden/symfony-oidc-contracts": "^1.0.1",
+        "halloverden/symfony-oidc-contracts": "^1.0.1|^2.0",
         "web-token/jwt-core": "^3.0",
         "web-token/jwt-signature-algorithm-rsa": "^3.0",
         "jms/serializer": "^3.8",
